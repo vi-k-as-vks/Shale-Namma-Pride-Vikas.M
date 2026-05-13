@@ -1,20 +1,53 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Shale-Namma Pride
 
-# Run and deploy your AI Studio app
+School Transparency & Pride Portal
 
-This contains everything you need to run your app locally.
+## Description
+Shale-Namma Pride is a School Transparency & Pride Portal designed to improve communication and trust between government schools and rural communities. The application enables Headmasters and SDMC (School Development & Monitoring Committee) members to showcase the daily activities and achievements of the school through photos, updates, and announcements.
 
-View your app in AI Studio: https://ai.studio/apps/32362486-6e17-4721-a4f6-4d1e606475ce
+The application allows schools to share:
+- Daily Meal Updates
+- Student Achievements
+- Facility Tour Gallery
+- School Announcements
+- Parent Feedback
 
-## Run Locally
+The app supports both Kannada and English languages.
 
-**Prerequisites:**  Node.js
+## Features
+- Daily Meal Updates
+- Student Stars Section
+- Facility Gallery
+- Anonymous Feedback Box
+- Kannada / English Toggle
+- Firebase Realtime Updates
+- Dark & Light Theme
+
+## Technologies Used
+- Kotlin
+- Jetpack Compose
+- Firebase
+- Material 3
+- Gemini API
+
+## Developed By
+Vikas M,
+1EE22AE044,
+vikasm1013@gmail.com,
+Aeronautical Engineer,
+East West College of Engineering.
+
+## Internship
+MindMatrix.io, VTU Internship Program
+
+## Domain
+Android App Development using Gen AI
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# Run and deploy my app
+
+This contains everything you need to run the app locally.
+
+View this app in AI Studio: https://ai.studio/apps/32362486-6e17-4721-a4f6-4d1e606475ce
+
+
