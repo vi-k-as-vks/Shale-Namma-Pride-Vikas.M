@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+Kannada:wght@300;400;500;600;700;800;900&family=Baloo+Tamma+2:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Outfit", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
+  --font-child: "Nunito", "Baloo Tamma 2", sans-serif;
+  
+  --color-primary-soft: #E0F2FE;
+  --color-secondary-soft: #F0FDF4;
+  --color-accent-soft: #FEF3C7;
+  --color-error-soft: #FEF2F2;
+  
+  /* Dark Mode Variants */
+  --color-primary-dark: #0c4a6e;
+  --color-secondary-dark: #064e3b;
+  --color-accent-dark: #78350f;
+  --color-error-dark: #7f1d1d;
+  
+  --color-school-blue: #0EA5E9;
+  --color-school-green: #22C55E;
+  --color-school-yellow: #F59E0B;
+  --color-school-pink: #EC4899;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 overflow-x-hidden;
+  font-family: var(--font-sans);
+}
+
+.font-kannada body, .font-kannada {
+  font-family: "Noto Sans Kannada", sans-serif !important;
+}
+
+.child-card {
+  @apply bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 p-5 transition-all duration-300;
+}
+
+.child-button {
+  @apply px-6 py-3 rounded-full font-semibold transition-all duration-300 transform active:scale-95;
+}

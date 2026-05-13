@@ -1,0 +1,130 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      // For this app, we'll check if the user has an 'admin' role in the users collection
+      // or if they are the special bootstrap admin
+      return isSignedIn() && (
+        (request.auth.token.email == 'vikasm1013@gmail.com' || request.auth.token.email == 'redmonster496@gmail.com') && 
+        request.auth.token.email_verified == true
+      ) || (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- User Rules ---
+    match /users/{userId} {
+      function isOwner(uid) {
+        return isSignedIn() && uid == request.auth.uid;
+      }
+      function isValidUser(data) {
+        return data.keys().hasAll(['uid', 'phoneNumber', 'role']) &&
+               data.uid == request.auth.uid &&
+               data.role in ['admin', 'parent'] &&
+               (data.get('language', 'en') in ['en', 'kn']);
+      }
+
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['name', 'language', 'updatedAt', 'phoneNumber', 'photoUrl']);
+    }
+
+    // --- Meal Rules ---
+    match /meals/{mealId} {
+      function isValidMeal(data) {
+        return data.keys().hasAll(['date', 'photoUrl', 'menuEn', 'menuKn']) &&
+               data.date is string && data.date.size() <= 20 &&
+               data.photoUrl is string && (data.photoUrl.size() <= 500 || data.photoUrl.size() > 1000) && // Allow base64 strings
+               data.menuEn is string && data.menuEn.size() <= 2000 &&
+               data.menuKn is string && data.menuKn.size() <= 2000;
+      }
+
+      allow read: if true;
+      allow create: if isAdmin() && isValidMeal(incoming());
+      allow update: if isAdmin() && isValidMeal(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['photoUrl', 'menuEn', 'menuKn', 'updatedAt']);
+      allow delete: if isAdmin();
+    }
+
+    // --- Facility Rules ---
+    match /facilities/{facilityId} {
+      function isValidFacility(data) {
+        return data.keys().hasAll(['category', 'photoUrl', 'captionEn', 'captionKn']) &&
+               data.category is string && data.photoUrl is string &&
+               data.captionEn is string && data.captionKn is string;
+      }
+
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidFacility(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // --- Student Rules ---
+    match /students/{studentId} {
+      function isValidStudent(data) {
+        return data.keys().hasAll(['name', 'achievementEn', 'achievementKn', 'photoUrl', 'date']) &&
+               data.name is string && data.achievementEn is string && data.achievementKn is string &&
+               data.photoUrl is string && (data.photoUrl.size() <= 500 || data.photoUrl.size() > 1000); // Allow base64 strings
+      }
+
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidStudent(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // --- Config Rules ---
+    match /config/{configId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- Settings Rules ---
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- Feedback Rules ---
+    match /feedback/{feedbackId} {
+      function isValidFeedback(data) {
+        return data.keys().hasAll(['text', 'type', 'isAnonymous', 'createdAt']) &&
+               data.text is string && data.text.size() <= 3000 &&
+               data.type in ['suggestion', 'bug'] &&
+               data.isAnonymous is bool;
+      }
+
+      allow create: if (incoming().isAnonymous == true || (isSignedIn() && incoming().userId == request.auth.uid)) && 
+                    isValidFeedback(incoming());
+      allow read: if isAdmin();
+      allow update: if isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+    }
+  }
+}

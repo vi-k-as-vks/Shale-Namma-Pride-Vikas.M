@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "parent"] },
+        "language": { "type": "string", "enum": ["en", "kn"] },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "phoneNumber", "role"]
+    },
+    "Meal": {
+      "title": "Meal",
+      "description": "Daily mid-day meal update",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "menuEn": { "type": "string" },
+        "menuKn": { "type": "string" },
+        "publisherId": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "photoUrl", "menuEn", "menuKn", "publisherId"]
+    },
+    "Facility": {
+      "title": "Facility",
+      "description": "School facility tour image",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "captionEn": { "type": "string" },
+        "captionKn": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "photoUrl", "captionEn", "captionKn"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student achievement/star record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "achievementEn": { "type": "string" },
+        "achievementKn": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "date": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "achievementEn", "achievementKn", "photoUrl", "date"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Parent feedback/suggestions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["suggestion", "bug"] },
+        "isAnonymous": { "type": "boolean" },
+        "userId": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "reviewed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "type", "isAnonymous", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/meals/{mealId}": {
+      "schema": "Meal",
+      "description": "Daily meal updates"
+    },
+    "/facilities/{facilityId}": {
+      "schema": "Facility",
+      "description": "School facility gallery"
+    },
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Student stars/achievements"
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Parent feedback and bug reports"
+    },
+    "/config/{configId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "enrollment": { "type": "string" },
+          "staff": { "type": "string" },
+          "classes": { "type": "string" },
+          "list": { 
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "en": { "type": "string" },
+                "kn": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "description": "School global configuration (stats, notifications)"
+    }
+  }
+}
